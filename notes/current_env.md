@@ -32,3 +32,5 @@ Each node has following resources running.
 - MariaDB Cluster, 6 Instances
 - Traefik Loadbalancer, 1 Instance
 - Swarmpit, 4 Instances
+- Echo, 1 Instance
+- Auth, 3 Instances
