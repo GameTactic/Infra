@@ -1,0 +1,38 @@
+version: '3.1'
+
+services:
+  server:
+    image: registry.gitlab.com/gametactic/authentication:latest
+    environment:
+      - APP_ENV=prod
+      - JWT_SECRET_KEY=/run/secrets/jwt_private
+      - JWT_PUBLIC_KEY=/run/secrets/jwt_public
+      - JWT_PASSPHRASE=<PASSPHRASE>
+      - DATABASE_URL=mysql://gt_auth:<PASS>@<HOST>/gt_auth
+      - GUARD_WG=***REMOVED***
+      - TRUSTED_HOSTS=^auth.eu.gametactic.eu$$
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.auth.rule=Host(`auth.eu.gametactic.eu`)"
+        - "traefik.http.routers.auth.entrypoints=web"
+        - "traefik.http.services.auth.loadbalancer.server.port=80"
+    networks:
+      - GT_PUB
+      - GT_DB
+    secrets:
+      - jwt_private
+      - jwt_public
+
+networks:
+  GT_PUB:
+    external: true
+  GT_DB:
+    external: true
+
+secrets:
+  jwt_private:
+    external: true
+  jwt_public:
+    external: true
