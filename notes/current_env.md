@@ -13,7 +13,7 @@ from official Docker repository. Docker is running in swarm mode.
 Each node has following resources running.
 
 - CPU: 16 vCPU
-- SSD: 25GB
+- SSD: 75GB
 - RAM: 20GB
 
 ### Versions
@@ -21,8 +21,8 @@ Each node has following resources running.
 | Product       | Version       |
 | ------------- | -------------:|
 | Host OS       | Debian 10     |
-| Docker        | 19.03.5       |
-| Traefik       | 2.0.7         |
+| Docker        | 19.03.6       |
+| Traefik       | 2.1.4         |
 | MariaDB       | 10.2          |
 
 
@@ -30,7 +30,12 @@ Each node has following resources running.
 ### Stacks
 
 - MariaDB Cluster, 6 Instances
+- Redis Cluster, 3 Instances
 - Traefik Loadbalancer, 1 Instance
+- Gitlab Runner, 1 Instance
 - Swarmpit, 4 Instances
-- Echo, 1 Instance
+- Echo, 1 Instance **Deprecated**
+- Socket 1 Instance
 - Auth, 3 Instances
+- User, 1 Instance
+- Room, 1 Instance
