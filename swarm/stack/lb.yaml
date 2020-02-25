@@ -1,20 +1,20 @@
-version: '3'
+version: '3.3'
 
 services:
   traefik:
-    image: traefik:v2.0.7
+    image: traefik:v2.1.7
     command:
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      - "--providers.docker.swarmMode=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--api.dashboard=true"
-      - "--providers.docker.network=GT_PUB"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencryptresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencryptresolver.acme.email=acme@gametactic.eu"
-      - "--certificatesresolvers.letsencryptresolver.acme.storage=/letsencrypt/acme.json"
+     - --providers.docker.endpoint=unix:///var/run/docker.sock
+     - --providers.docker.swarmMode=true
+     - --providers.docker.exposedbydefault=false
+     - --api.dashboard=true
+     - --providers.docker.network=GT_PUB
+     - --entrypoints.web.address=:80
+     - --entrypoints.websecure.address=:443
+     - --certificatesresolvers.le.acme.httpchallenge=true
+     - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+     - --certificatesresolvers.le.acme.email=acme@gametactic.eu
+     - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
     ports:
       - 80:80
       - 443:443
@@ -28,20 +28,19 @@ services:
         constraints:
           - node.role == manager
       labels:
-        # Dashboard
-        - "traefik.http.routers.api.rule=Host(`lb.eu.gametactic.eu`)"
-        - "traefik.http.routers.api.entrypoints=websecure"
-        - "traefik.http.routers.api.service=api@internal"
-        - "traefik.http.routers.api.middlewares=auth-dash"
-        - "traefik.http.routers.api.tls"
-        - "traefik.http.middlewares.auth-dash.basicauth.users=<user>:<hash>"
-        # Other
-        - "traefik.enable=true"
-        - "traefik.http.services.justAdummyService.loadbalancer.server.port=1337"
-        - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-        - "traefik.http.routers.http-catchall.entrypoints=web"
-        - "traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker"
-        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        traefik.http.routers.api.entrypoints: websecure
+        traefik.http.routers.api.rule: Host(`lb.eu.gametactic.eu`)
+        traefik.http.routers.http-catchall.middlewares: redirect-to-https@docker
+        traefik.http.routers.api.tls: 'true'
+        traefik.http.routers.http-catchall.rule: hostregexp(`{host:.+}`)
+        traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
+        traefik.http.routers.api.middlewares: auth-dash
+        traefik.http.routers.api.tls.certresolver: le
+        traefik.http.routers.http-catchall.entrypoints: web
+        traefik.http.routers.api.service: api@internal
+        traefik.http.services.justAdummyService.loadbalancer.server.port: '1337'
+        traefik.enable: 'true'
+        traefik.http.middlewares.auth-dash.basicauth.users: <user>:<pass>
 volumes:
   traefik-certificates:
 networks:
