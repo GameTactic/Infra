@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  server:
+    image: registry.gitlab.com/gametactic/cpp-echo:0-2
+    networks:
+     - GT_PUB
+    logging:
+      driver: json-file
+    deploy:
+      labels:
+        traefik.http.services.echo.loadbalancer.server.port: '80'
+        traefik.http.routers.echo-ssl.entrypoints: websecure
+        traefik.http.routers.echo.entrypoints: web
+        traefik.http.routers.echo-ssl.tls: 'true'
+        traefik.http.routers.echo.rule: Host(`echo.eu.gametactic.eu`)
+        traefik.http.routers.echo-ssl.tls.certresolver: le
+        swarmpit.service.deployment.autoredeploy: 'true'
+        traefik.http.routers.echo-ssl.rule: Host(`echo.eu.gametactic.eu`)
+        traefik.enable: 'true'
+networks:
+  GT_PUB:
+    external: true
