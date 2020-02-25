@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  server:
+    image: registry.gitlab.com/gametactic/room:develop
+    networks:
+     - GT_PUB
+    logging:
+      driver: json-file
+    deploy:
+      labels:
+        traefik.http.services.room.loadbalancer.server.port: '80'
+        traefik.http.routers.room-ssl.rule: Host(`room.eu.gametactic.eu`)
+        traefik.http.routers.room-ssl.tls: 'true'
+        traefik.http.routers.room.rule: Host(`room.eu.gametactic.eu`)
+        swarmpit.service.deployment.autoredeploy: 'true'
+        traefik.http.routers.room-ssl.tls.certresolver: le
+        traefik.http.routers.room.entrypoints: web
+        traefik.enable: 'true'
+        traefik.http.routers.room-ssl.entrypoints: websecure
+networks:
+  GT_PUB:
+    external: true
